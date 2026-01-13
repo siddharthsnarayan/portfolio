@@ -1,38 +1,6 @@
-'use client';
-
-import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 export default function LandingPage() {
-  const frames = [
-    '/walk/walk_0000.png',
-    '/walk/walk_0001.png',
-    '/walk/walk_0002.png',
-    '/walk/walk_0003.png',
-    '/walk/walk_0004.png',
-    '/walk/walk_0005.png',
-    '/walk/walk_0006.png',
-    '/walk/walk_0007.png',
-    '/walk/walk_0008.png',
-    '/walk/walk_0009.png',
-    '/walk/walk_0010.png',
-    '/walk/walk_0011.png',
-    '/walk/walk_0012.png',
-    '/walk/walk_0013.png',
-    '/walk/walk_0014.png',
-  ];
-
-  const [frameIndex, setFrameIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFrameIndex((prev) => (prev + 1) % frames.length);
-    }, 80);
-
-    return () => clearInterval(interval);
-  }, [frames.length]);
-
   return (
     <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-black">
       <div className="relative z-10 text-center space-y-8 p-6">
@@ -57,19 +25,6 @@ export default function LandingPage() {
           >
             Portfolio
           </Link>
-        </div>
-      </div>
-
-      <div className="absolute inset-0 flex items-end justify-center pb-16 pointer-events-none">
-        <div className="walk-up-down">
-          <Image
-            src={frames[frameIndex]}
-            alt="Walking Siddharth illustration"
-            width={220}
-            height={360}
-            className="object-contain"
-            priority
-          />
         </div>
       </div>
     </div>
