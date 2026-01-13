@@ -33,10 +33,10 @@ body {
 
 @keyframes walk-horizontal {
   0% {
-    transform: translate(-20%, 17px);
+    transform: translate(-20%, 19px);
   }
   100% {
-    transform: translate(1000%, 17px);
+    transform: translate(780%, 19px);
   }
 }
 

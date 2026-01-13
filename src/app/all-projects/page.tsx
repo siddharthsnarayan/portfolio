@@ -35,7 +35,7 @@ function WalkingOverlay() {
   }, [frames.length]);
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-full flex justify-start z-0">
+    <div className="pointer-events-none absolute inset-x-0 bottom-full flex justify-start z-[60]">
       <div className="walk-horizontal">
         <Image
           src={frames[frameIndex]}
@@ -55,7 +55,7 @@ export default function AllProjects() {
     <div className="pt-32 px-6 lg:px-12 max-w-[1920px] mx-auto bg-black">
       <div className="relative">
         <WalkingOverlay />
-        <div className="mt-2 md:mt-7 grid grid-cols-1 md:grid-cols-2 gap-8 gap-y-12 pb-24 relative z- 10">
+        <div className="mt-0 md:mt-0 grid grid-cols-1 md:grid-cols-2 gap-8 gap-y-12 pb-24 relative z-10">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
