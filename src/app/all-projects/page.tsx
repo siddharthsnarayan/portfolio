@@ -3,42 +3,157 @@
 import Image from 'next/image';
 import ProjectCard from '@/components/ProjectCard';
 import { projects } from '@/data/projects';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+type Mode = 'walkBefore' | 'jump' | 'walkAfter';
 
 function WalkingOverlay() {
-  const frames = [
-    '/walk/walk_0000.png',
-    '/walk/walk_0001.png',
-    '/walk/walk_0002.png',
-    '/walk/walk_0003.png',
-    '/walk/walk_0004.png',
-    '/walk/walk_0005.png',
-    '/walk/walk_0006.png',
-    '/walk/walk_0007.png',
-    '/walk/walk_0008.png',
-    '/walk/walk_0009.png',
-    '/walk/walk_0010.png',
-    '/walk/walk_0011.png',
-    '/walk/walk_0012.png',
-    '/walk/walk_0013.png',
-    '/walk/walk_0014.png',
-  ];
+  const fullFrames = Array.from({ length: 100 }, (_, index) => {
+    const id = index.toString().padStart(4, '0');
+    return `/full/full_${id}.png`;
+  });
 
-  const [frameIndex, setFrameIndex] = useState(0);
+  const walkBeforeStart = 0;
+  const walkBeforeEnd = 16;
+  const jumpStartFrame = 17;
+  const jumpEndFrame = 84;
+  const walkAfterStart = 86;
+  const walkAfterEnd = 99;
+
+  const [frameIndex, setFrameIndex] = useState(walkBeforeStart);
+  const [mode, setMode] = useState<Mode>('walkBefore');
+  const [jumpPlayed, setJumpPlayed] = useState(false);
+  const [position, setPosition] = useState(0);
+
+  const modeRef = useRef<Mode>('walkBefore');
+  const jumpPlayedRef = useRef(false);
+  const positionRef = useRef(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFrameIndex((prev) => (prev + 1) % frames.length);
-    }, 80);
+    modeRef.current = mode;
+  }, [mode]);
 
-    return () => clearInterval(interval);
-  }, [frames.length]);
+  useEffect(() => {
+    jumpPlayedRef.current = jumpPlayed;
+  }, [jumpPlayed]);
+
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
+
+  useEffect(() => {
+    let animationFrameId: number;
+    let lastTime = performance.now();
+
+    const speedPerMs = 1 / 60000;
+    const walkFrameDuration = 80;
+    const jumpFrameDuration = 80;
+    const jumpStart = 0.39;
+    const jumpEnd = 0.49;
+
+    let walkAccumulator = 0;
+    let jumpAccumulator = 0;
+
+    function tick(now: number) {
+      const dt = now - lastTime;
+      lastTime = now;
+
+      const prevPos = positionRef.current;
+      let next = prevPos + speedPerMs * dt;
+      let wrapped = false;
+      if (next > 1) {
+        next -= 1;
+        wrapped = true;
+      }
+      positionRef.current = next;
+      setPosition(next);
+
+      if (wrapped) {
+        setMode('walkBefore');
+        modeRef.current = 'walkBefore';
+        setFrameIndex(walkBeforeStart);
+        setJumpPlayed(false);
+        jumpPlayedRef.current = false;
+        walkAccumulator = 0;
+        jumpAccumulator = 0;
+      }
+
+      const currentMode = modeRef.current;
+
+      if (!jumpPlayedRef.current && currentMode === 'walkBefore') {
+        const pos = positionRef.current;
+        if (pos >= jumpStart && pos <= jumpEnd) {
+          setMode('jump');
+          modeRef.current = 'jump';
+          setFrameIndex(jumpStartFrame);
+          setJumpPlayed(true);
+          jumpPlayedRef.current = true;
+        }
+      }
+
+      if (modeRef.current === 'walkBefore') {
+        walkAccumulator += dt;
+        if (walkAccumulator >= walkFrameDuration) {
+          walkAccumulator -= walkFrameDuration;
+          setFrameIndex((prev) => {
+            if (prev < walkBeforeStart || prev > walkBeforeEnd) {
+              return walkBeforeStart;
+            }
+            const next = prev + 1;
+            return next > walkBeforeEnd ? walkBeforeStart : next;
+          });
+        }
+      } else if (modeRef.current === 'jump') {
+        jumpAccumulator += dt;
+        if (jumpAccumulator >= jumpFrameDuration) {
+          jumpAccumulator -= jumpFrameDuration;
+          setFrameIndex((prev) => {
+            if (prev < jumpStartFrame || prev > jumpEndFrame) {
+              return jumpStartFrame;
+            }
+            if (prev >= jumpEndFrame) {
+              setMode('walkAfter');
+              modeRef.current = 'walkAfter';
+              return walkAfterStart;
+            }
+            return prev + 1;
+          });
+        }
+      } else if (modeRef.current === 'walkAfter') {
+        walkAccumulator += dt;
+        if (walkAccumulator >= walkFrameDuration) {
+          walkAccumulator -= walkFrameDuration;
+          setFrameIndex((prev) => {
+            if (prev < walkAfterStart || prev > walkAfterEnd) {
+              return walkAfterStart;
+            }
+            const next = prev + 1;
+            return next > walkAfterEnd ? walkAfterStart : next;
+          });
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(tick);
+    }
+
+    animationFrameId = requestAnimationFrame(tick);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [fullFrames.length, walkBeforeStart, walkBeforeEnd, walkAfterStart, walkAfterEnd, jumpStartFrame, jumpEndFrame]);
+
+  const startX = -20;
+  const endX = 780;
+  const translateX = startX + (endX - startX) * position;
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-full flex justify-start z-[60]">
-      <div className="walk-horizontal">
+      <div
+        style={{
+          transform: `translate(${translateX}%, 10px)`,
+        }}
+      >
         <Image
-          src={frames[frameIndex]}
+          src={fullFrames[frameIndex]}
           alt="Walking Siddharth illustration"
           width={160}
           height={260}
