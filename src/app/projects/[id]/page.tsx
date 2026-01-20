@@ -40,7 +40,7 @@ export default async function ProjectPage({ params }: PageProps) {
           src={project.imageUrl}
           alt={project.title}
           fill
-          className="object-cover"
+          className="object-contain"
           priority
         />
       </div>
@@ -54,7 +54,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 src={img}
                 alt={`${project.title} detail ${index + 1}`}
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
           ))}
