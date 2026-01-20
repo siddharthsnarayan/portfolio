@@ -18,7 +18,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-500" />
         <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <h3 className="text-lg font-medium text-white mb-1 text-center">
+          <h3 className="text-lg font-medium text-white mb-1 text-center uppercase tracking-widest">
             {project.title}
           </h3>
           <p className="text-sm text-gray-300 uppercase tracking-wider">

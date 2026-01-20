@@ -16,7 +16,7 @@ export default async function ProjectPage({ params }: PageProps) {
   }
 
   return (
-    <div className="pt-32 px-6 lg:px-12 max-w-[1920px] mx-auto space-y-12 pb-24">
+    <div id="top" className="pt-32 px-6 lg:px-12 max-w-[1920px] mx-auto space-y-12 pb-24">
       {/* Header */}
       <header className="space-y-4">
         <h1 className="text-4xl font-light text-white">{project.title}</h1>
@@ -66,7 +66,7 @@ export default async function ProjectPage({ params }: PageProps) {
         <Link href="/all-projects" className="hover:text-white transition-colors">
           ← Back to Projects
         </Link>
-        <Link href="#" className="hover:text-white transition-colors">
+        <Link href="#top" className="hover:text-white transition-colors">
           Back to Top ↑
         </Link>
       </div>

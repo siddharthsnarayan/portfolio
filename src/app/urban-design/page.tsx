@@ -2,10 +2,7 @@ import ProjectCard from '@/components/ProjectCard';
 import { projects } from '@/data/projects';
 
 export default function UrbanDesign() {
-  const urbanOrder = ['1', '2', '3', '4', '5', '6', '11'];
-  const urbanProjects = urbanOrder
-    .map((id) => projects.find((p) => p.id === id))
-    .filter((p) => p !== undefined);
+  const urbanProjects = projects.filter((project) => project.category === 'Urban Design');
 
   return (
     <div className="pt-32 px-6 lg:px-12 max-w-[1920px] mx-auto bg-black">
