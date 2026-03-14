@@ -123,10 +123,26 @@ function WalkingOverlay() {
 }
 
 export default function AllProjects() {
+  const [showOverlay, setShowOverlay] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const atTop = window.scrollY <= 1;
+      setShowOverlay(atTop);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <div className="pt-32 px-6 lg:px-12 max-w-[1920px] mx-auto bg-black">
       <div className="relative">
-        <WalkingOverlay />
+        {showOverlay && <WalkingOverlay />}
         <div className="mt-0 md:mt-0 grid grid-cols-1 md:grid-cols-2 gap-8 gap-y-12 pb-24 relative z-10">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
